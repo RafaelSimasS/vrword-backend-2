@@ -12,11 +12,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from '../guards/jwt.strategy';
 import { USER_REPOSITORY } from 'src/domain/user/repositories/user.repository';
+import { JwtCookieAuthGuard } from '../guards/jwt-cookie.guard';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     PrismaModule,
     ConfigModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService): Promise<JwtModuleOptions> => ({
@@ -39,8 +42,16 @@ import { USER_REPOSITORY } from 'src/domain/user/repositories/user.repository';
     LoginUserUseCase,
     ValidateTokenUseCase,
     JwtStrategy,
+    JwtCookieAuthGuard,
     { provide: USER_REPOSITORY, useExisting: PrismaUserAdapter },
   ],
-  exports: [RegisterUserUseCase, LoginUserUseCase, ValidateTokenUseCase],
+  exports: [
+    PassportModule,
+    JwtModule,
+    JwtCookieAuthGuard,
+    RegisterUserUseCase,
+    LoginUserUseCase,
+    ValidateTokenUseCase,
+  ],
 })
 export class AuthModule {}
