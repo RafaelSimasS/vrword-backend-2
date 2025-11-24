@@ -8,9 +8,7 @@ import { UpdateDeckUseCase } from '../../../application/deck/use-cases/update-de
 import { DeleteDeckUseCase } from '../../../application/deck/use-cases/delete-deck.usecase';
 import { ShowDeckUseCase } from '../../../application/deck/use-cases/show-deck.usecase';
 import { ListDecksUseCase } from '../../../application/deck/use-cases/list-decks.usecase';
-import { JwtCookieAuthGuard } from '../guards/jwt-cookie.guard';
 import { DECK_REPOSITORY } from 'src/domain/deck/repositories/deck.repository';
-import { JwtStrategy } from '../guards/jwt.strategy';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({

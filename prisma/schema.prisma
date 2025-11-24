@@ -45,8 +45,31 @@ model Card {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  deckId String
-  deck   Deck   @relation(fields: [deckId], references: [id])
+  deckId          String
+  deck            Deck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  studyProgresses StudyProgress[]
 
   @@index([deckId])
+}
+
+model StudyProgress {
+  id     String @id @default(cuid())
+  userId String
+  cardId String
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  // SM-2 fields
+  easeFactor   Float     @default(2.5) // EF, inicia em 2.5 segundo o SM-2
+  interval     Int       @default(0) // em dias
+  repetition   Int       @default(0) // número de repetições consecutivas
+  dueDate      DateTime  @default(now()) // próxima revisão prevista
+  lastReviewed DateTime?
+  reviewCount  Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, cardId])
+  @@index([userId])
+  @@index([cardId])
 }
