@@ -10,10 +10,12 @@ async function bootstrap() {
   const config = app.get(ConfigService);
 
   const envirotment = config.get<string>('NODE_ENV');
+  const port = Number(config.get<string>('PORT')) || 3001;
+  const host = config.get<string>('HOST') || '0.0.0.0';
 
   if (envirotment === 'development') {
     app.enableCors({
-      origin: ['http://localhost:3000', 'http://10.243.201.221:3000'],
+      origin: ['http://localhost:3000', config.get<string>('FRONTEND_URL')],
       credentials: true,
     });
   } else {
@@ -32,7 +34,8 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: false },
     }),
   );
-  await app.listen(3001);
-  console.log('Listening on http://localhost:3001');
+
+  await app.listen(port, host);
+  console.log(`Listening on ${host}:${port}`);
 }
 bootstrap();
