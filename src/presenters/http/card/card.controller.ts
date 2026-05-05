@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -56,7 +57,7 @@ export class CardController {
       userId,
     });
     if (!updated) {
-      return { error: 'Not found or unauthorized' };
+      throw new NotFoundException('Card not found or access denied');
     }
     return updated;
   }
@@ -72,7 +73,7 @@ export class CardController {
   async show(@Req() req: any, @Param('id') id: string) {
     const userId = req.user?.id;
     const card = await this.showCard.execute({ id, userId });
-    if (!card) return { error: 'Not found or unauthorized' };
+    if (!card) throw new NotFoundException('Card not found or access denied');
     return card;
   }
 

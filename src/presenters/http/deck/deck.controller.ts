@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -11,13 +12,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtCookieAuthGuard } from '../guards/jwt-cookie.guard';
-import { CreateDeckUseCase } from 'src/application/deck/use-cases/create-deck.usecase';
-import { UpdateDeckUseCase } from 'src/application/deck/use-cases/update-deck.usecase';
-import { DeleteDeckUseCase } from 'src/application/deck/use-cases/delete-deck.usecase';
-import { ShowDeckUseCase } from 'src/application/deck/use-cases/show-deck.usecase';
-import { ListDecksUseCase } from 'src/application/deck/use-cases/list-decks.usecase';
-import { UpdateDeckDto } from 'src/application/deck/dto/update-deck.dto';
-import { CreateDeckDto } from 'src/application/deck/dto/create-deck.dto';
+import { CreateDeckUseCase } from '../../../application/deck/use-cases/create-deck.usecase';
+import { UpdateDeckUseCase } from '../../../application/deck/use-cases/update-deck.usecase';
+import { DeleteDeckUseCase } from '../../../application/deck/use-cases/delete-deck.usecase';
+import { ShowDeckUseCase } from '../../../application/deck/use-cases/show-deck.usecase';
+import { ListDecksUseCase } from '../../../application/deck/use-cases/list-decks.usecase';
+import { UpdateDeckDto } from '../../../application/deck/dto/update-deck.dto';
+import { CreateDeckDto } from '../../../application/deck/dto/create-deck.dto';
 
 @Controller('decks')
 @UseGuards(JwtCookieAuthGuard)
@@ -54,7 +55,7 @@ export class DeckController {
       userId,
     });
     if (!updated) {
-      return { error: 'Not found or unauthorized' };
+      throw new NotFoundException('Deck not found or access denied');
     }
     return updated;
   }
@@ -70,7 +71,7 @@ export class DeckController {
   async show(@Req() req: any, @Param('id') id: string) {
     const userId = req.user?.id;
     const deck = await this.showDeck.execute({ id, userId });
-    if (!deck) return { error: 'Not found or unauthorized' };
+    if (!deck) throw new NotFoundException('Deck not found or access denied');
     return deck;
   }
 

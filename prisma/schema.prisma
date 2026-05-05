@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -71,4 +72,18 @@ model StudyProgress {
   @@unique([userId, cardId])
   @@index([userId])
   @@index([cardId])
+}
+
+model LlmUsage {
+  id     String @id @default(cuid())
+  userId String
+  date   String // YYYY-MM-DD
+
+  count Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId])
 }

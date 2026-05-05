@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   IStudyRepository,
   STUDY_REPOSITORY,
-} from '../../../../src/domain/study/repositories/study.repository';
+} from '../../../domain/study/repositories/study.repository';
 
 @Injectable()
 export class GetProgressUseCase {

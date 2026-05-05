@@ -25,21 +25,20 @@ export class PrismaCardAdapter implements ICardRepository {
     if (deck.userId !== data.userId)
       throw new ForbiddenException('Não autorizado');
 
-    const [card] = await this.prisma.$transaction([
-      this.prisma.card.create({
+    return this.prisma.$transaction(async (tx) => {
+      const card = await tx.card.create({
         data: {
           front: data.front,
           back: data.back,
           deck: { connect: { id: data.deckId } },
         },
-      }),
-      this.prisma.deck.update({
+      });
+      await tx.deck.update({
         where: { id: data.deckId },
         data: { cardsCount: { increment: 1 } },
-      }),
-    ]);
-
-    return card;
+      });
+      return card;
+    });
   }
 
   async update(
@@ -75,16 +74,15 @@ export class PrismaCardAdapter implements ICardRepository {
     if (!deck) throw new NotFoundException('Deck não encontrado');
     if (deck.userId !== userId) throw new ForbiddenException('Não autorizado');
 
-    await this.prisma.$transaction([
-      this.prisma.card.delete({ where: { id } }),
-      this.prisma.deck.update({
-        where: { id: card.deckId },
-        data: {
-          // prevent negative values
-          cardsCount: { decrement: 1 },
-        },
-      }),
-    ]);
+    await this.prisma.$transaction(async (tx) => {
+      await tx.card.delete({ where: { id } });
+      // GREATEST(0, ...) evita cardsCount negativo em caso de inconsistência prévia
+      await tx.$executeRaw`
+        UPDATE "Deck"
+        SET "cardsCount" = GREATEST(0, "cardsCount" - 1)
+        WHERE id = ${card.deckId}
+      `;
+    });
   }
 
   async findById(id: string, userId?: string): Promise<Card | null> {

@@ -3,8 +3,8 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   IStudyRepository,
   STUDY_REPOSITORY,
-} from '../../../../src/domain/study/repositories/study.repository';
-import { PrismaService } from '../../../../src/infrastructure/prisma/prisma.service';
+} from '../../../domain/study/repositories/study.repository';
+import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { applySm2 } from '../sm2';
 
 @Injectable()

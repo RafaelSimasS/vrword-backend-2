@@ -5,6 +5,7 @@ import { DeckModule } from './presenters/http/deck/deck.module';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { CardModule } from './presenters/http/card/card.module';
 import { StudyModule } from './presenters/http/study/study.module';
+import { LlmModule } from './presenters/http/llm/llm.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { StudyModule } from './presenters/http/study/study.module';
     DeckModule,
     CardModule,
     StudyModule,
+    LlmModule,
   ],
 })
 export class AppModule {}

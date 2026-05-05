@@ -8,7 +8,7 @@ import {
 
 export class RegisterDto {
   @IsEmail({}, { message: 'Email inválido' })
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(8, { message: 'Senha precisa ter ao menos 8 caracteres' })
@@ -17,5 +17,5 @@ export class RegisterDto {
     message:
       'Senha precisa conter ao menos uma letra maiúscula, uma minúscula e um número',
   })
-  password: string;
+  password!: string;
 }
