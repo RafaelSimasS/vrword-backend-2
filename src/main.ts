@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +16,11 @@ async function bootstrap() {
 
   if (envirotment === 'development') {
     app.enableCors({
-      origin: ['http://localhost:3000', config.get<string>('FRONTEND_URL')],
+      origin: [
+        'http://localhost:3000',
+        'https://localhost:3000',
+        config.get<string>('FRONTEND_URL'),
+      ].filter(Boolean),
       credentials: true,
     });
   } else {
@@ -25,6 +30,8 @@ async function bootstrap() {
     });
   }
   app.use(cookieParser());
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ limit: '10mb', extended: true }));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
