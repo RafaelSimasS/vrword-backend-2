@@ -59,8 +59,14 @@ export class ReviewCardUseCase {
       const nextState = applySm2(prevState, quality);
 
       const now = new Date();
+      // SM-2 rule 6: quality < 3 → reset to start; dueDate = now so card is
+      // immediately due again (same-session repetition per SM-2 rule 7).
+      // quality >= 3 → schedule next review after computed interval.
       const nextDue = new Date(now);
-      nextDue.setDate(nextDue.getDate() + nextState.interval);
+      if (quality >= 3) {
+        nextDue.setDate(nextDue.getDate() + nextState.interval);
+      }
+      // quality < 3 → nextDue stays as `now` (card is immediately due again)
 
       const updated = await tx.studyProgress.update({
         where: { id: progress.id },

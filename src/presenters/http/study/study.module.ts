@@ -6,6 +6,7 @@ import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { ReviewCardUseCase } from '../../../application/study/use-cases/review-card.usecase';
 import { GetNextUseCase } from '../../../application/study/use-cases/get-next.usecase';
 import { GetProgressUseCase } from '../../../application/study/use-cases/get-progress.usecase';
+import { GetNextScheduledUseCase } from '../../../application/study/use-cases/get-next-scheduled.usecase';
 import { AuthModule } from '../auth/auth.module';
 import { STUDY_REPOSITORY } from 'src/domain/study/repositories/study.repository';
 
@@ -29,6 +30,11 @@ import { STUDY_REPOSITORY } from 'src/domain/study/repositories/study.repository
     {
       provide: GetProgressUseCase,
       useFactory: (repo: any) => new GetProgressUseCase(repo),
+      inject: [STUDY_REPOSITORY],
+    },
+    {
+      provide: GetNextScheduledUseCase,
+      useFactory: (repo: any) => new GetNextScheduledUseCase(repo),
       inject: [STUDY_REPOSITORY],
     },
   ],

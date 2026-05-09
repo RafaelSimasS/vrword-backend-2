@@ -133,4 +133,27 @@ export class PrismaStudyAdapter implements IStudyRepository {
 
     return combined.slice(0, limit);
   }
+
+  /**
+   * Returns the earliest dueDate strictly in the future for this user
+   * (optionally filtered by deckId). Returns null when no future review exists.
+   */
+  async findNextScheduled(
+    userId: string,
+    deckId?: string,
+  ): Promise<Date | null> {
+    const now = new Date();
+
+    const result = await this.prisma.studyProgress.findFirst({
+      where: {
+        userId,
+        dueDate: { gt: now },
+        ...(deckId ? { card: { deckId } } : {}),
+      },
+      orderBy: { dueDate: 'asc' },
+      select: { dueDate: true },
+    });
+
+    return result?.dueDate ?? null;
+  }
 }

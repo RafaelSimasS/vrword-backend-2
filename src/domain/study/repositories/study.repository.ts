@@ -33,4 +33,10 @@ export interface IStudyRepository {
     deckId?: string,
     limit?: number,
   ): Promise<StudyProgress[]>;
+
+  /**
+   * Returns the earliest dueDate that is strictly in the future (> now) for
+   * this user (optionally filtered by deckId).  Returns null when none exist.
+   */
+  findNextScheduled(userId: string, deckId?: string): Promise<Date | null>;
 }
