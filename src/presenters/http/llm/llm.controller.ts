@@ -63,4 +63,25 @@ export class LlmController {
       );
     }
   }
+
+  @Post('detect-live')
+  async detectLive(@Req() req: any, @Body() body: DetectDto) {
+    const userId: string = req.user?.id;
+
+    if (!body.image) {
+      throw new HttpException(
+        'image is required',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    try {
+      return await this.llmClient.detectObjectsLive(body.image, userId);
+    } catch (err: any) {
+      throw new HttpException(
+        err?.message ?? 'Live detection failed. Please try again.',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
 }

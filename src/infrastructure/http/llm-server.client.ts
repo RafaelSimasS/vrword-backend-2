@@ -11,6 +11,8 @@ export type DetectedObject = {
   labelEn: string;
   labelPt: string;
   score: number;
+  /** Bounding box normalised to [0, 1]: [x1, y1, x2, y2] */
+  bbox?: [number, number, number, number] | null;
 };
 
 export type DetectionResult = {
@@ -82,6 +84,23 @@ export class LlmServerClient {
 
     if (!response.ok) {
       return this._handleError(response, 'LLM /detect');
+    }
+
+    return response.json() as Promise<DetectionResult>;
+  }
+
+  async detectObjectsLive(
+    imageBase64: string,
+    userId: string,
+  ): Promise<DetectionResult> {
+    const response = await fetch(`${this.baseUrl}/detect-live`, {
+      method: 'POST',
+      headers: { ...this._headers, 'X-User-Id': userId },
+      body: JSON.stringify({ image: imageBase64 }),
+    });
+
+    if (!response.ok) {
+      return this._handleError(response, 'LLM /detect-live');
     }
 
     return response.json() as Promise<DetectionResult>;
